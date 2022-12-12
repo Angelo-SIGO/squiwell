@@ -1,0 +1,21 @@
+{
+  "name": "squiwell",
+  "version": "1.0.0",
+  "description": "Squiwell is command line tool that store your project templates to save time when starting a new project.",
+  "main": "squiwell.js",
+  "keywords": [
+    "tool",
+    "cli",
+    "cli-tool",
+    "productivity"
+  ],
+  "author": "Angelo Silva",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "squiwell": "squiwell.js"
+  },
+  "dependencies": {
+    "dree": "^3.4.2"
+  }
+}
