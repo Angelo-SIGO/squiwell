@@ -16,6 +16,6 @@
     "squiwell": "squiwell.js"
   },
   "dependencies": {
-    "dree": "^3.4.2"
+    "inquirer": "^9.1.4"
   }
 }

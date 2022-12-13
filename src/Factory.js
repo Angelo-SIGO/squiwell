@@ -1,17 +1,27 @@
 import * as fs from 'fs';
 import path from 'path';
+import inquirer from 'inquirer';
 
 class Factory {
-    constructor(storage = '') {
+    constructor(storage = '', questions = []) {
         this.storage = storage;
+        this.questions = questions;
     }
 
     setStorage(dir) {
         this.storage = dir;
     }
 
+    setQuestions(questions) {
+        this.questions = questions;
+    }
+
     getStorage() {
         return this.storage;
+    }
+
+    getQuestions() {
+        return this.questions;
     }
 
     store(itens) {
@@ -22,6 +32,21 @@ class Factory {
 
             fs.mkdirSync(dest);
             this.importContent(item, dest);
+        });
+    }
+
+    send() {
+        const questions = this.getQuestions();
+
+        inquirer.prompt(questions).then((answers) => {
+            const
+            type = answers['project-type'],
+            name = answers['project-name'],
+            origin = path.join(this.getStorage(), type),
+            dest = path.join(process.cwd(), name);
+
+            fs.mkdirSync(dest);
+            this.importContent(origin, dest);
         });
     }
 
