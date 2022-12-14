@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import inquirer from 'inquirer';
 
 class Factory {
@@ -47,6 +48,43 @@ class Factory {
 
             fs.mkdirSync(dest);
             this.importContent(origin, dest);
+        });
+    }
+
+    review() {
+        const questions = this.getQuestions();
+
+        let command = null;
+
+        switch (process.platform) {
+            case 'darwin':
+                command = 'open';
+                break;
+
+            case 'win32':
+                command = 'explorer';
+                break;
+
+            default:
+                command = 'xdg-open';
+                break;
+        }
+
+        inquirer.prompt(questions).then((answers) => {
+            const name = path.resolve(this.getStorage() ,answers['template-name']);
+            const dir = path.dirname(name);
+
+            execSync(`${command} '${name}'`);
+        });
+    }
+
+    discard() {
+        const questions = this.getQuestions();
+
+        inquirer.prompt(questions).then((answer) => {
+            const dir = path.join(this.getStorage(), answer['template-name']);
+
+            fs.rmSync(dir, { recursive: true });
         });
     }
 
