@@ -16,7 +16,7 @@ function main() {
     const 
     flag = process.argv.at(2),
     factory = new Factory(path.join(__dirname, 'templates')),
-    selectQuest = new Question('', '', 'list', {key: 'choices', value: fs.readdirSync(factory.getStorage())});
+    selectQuest = new Question('', '', 'list', { choices: fs.readdirSync(factory.getStorage()) });
     
     switch (flag) {
         case '--store':
@@ -27,7 +27,7 @@ function main() {
             const 
             controller = new QuestionControl(),
             inputQuest = new Question("project-name", "What is the project's name?");
-            inputQuest.setOptions({ key: 'validate', value: input => controller.testInput(input) })
+            inputQuest.setOptions({ validate: input => controller.testInput(input) });
 
             selectQuest.setName('project-type');
             selectQuest.setMessage('What kind of project are you creating?');
@@ -53,7 +53,7 @@ function main() {
             break;
 
         default:
-            const flagsAllowed = `[--store | --seed]`
+            const flagsAllowed = `[--store | --seed | --modify | --forgot]`
 
             console.log(`Invalid command, please use ${flagsAllowed}`);
             break;

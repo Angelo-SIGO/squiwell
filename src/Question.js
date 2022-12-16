@@ -1,5 +1,5 @@
 class Question {
-    constructor(name = '', message = '', type = 'input', ...options) {
+    constructor(name = '', message = '', type = 'input', options = {}) {
         this.setName(name);
         this.setMessage(message);
         this.setType(type);
@@ -7,31 +7,25 @@ class Question {
     }
 
     setName(name) {
-        this.name = name;
+        typeof name === String ? this.name = name : this.name = name.toString();
     }
 
     setMessage(text) {
-        this.message = text;
+        typeof text === String ? this.message = text : this.message = text.toString();
     }
 
     setType(type) {
-        this.type = type;
+        typeof type === String ? this.type = type : this.type = type.toString();
     }
 
-    setOptions(...options) {
-        if ( Array.isArray(options.at(0)) ) {
-            options.at(0).map((option) => {
-                this[option.key] = option.value;
-            });
+    setOptions(options) {
+        if ( typeof options === 'string' || Array.isArray(options) || typeof options !== 'object' ) {
+            throw `The "options" parameter must be an key-value pair object.`
         } else {
-            options.map((option) => {
-                this[option.key] = option.value;
+            Object.entries(options).map((option) => {
+                this[option.at(0)] = option.at(1);
             });
         }
-    }
-
-    get(option) {
-        return this[option];
     }
 }
 
