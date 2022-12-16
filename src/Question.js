@@ -18,10 +18,16 @@ class Question {
         this.type = type;
     }
 
-    setOptions(options) {
-        options.map((option) => {
-            this[option.key] = option.value;
-        });
+    setOptions(...options) {
+        if ( Array.isArray(options.at(0)) ) {
+            options.at(0).map((option) => {
+                this[option.key] = option.value;
+            });
+        } else {
+            options.map((option) => {
+                this[option.key] = option.value;
+            });
+        }
     }
 
     get(option) {
