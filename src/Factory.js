@@ -4,56 +4,48 @@ import { execSync } from 'child_process';
 import inquirer from 'inquirer';
 
 class Factory {
-    constructor(storage = '', questions = []) {
-        this.storage = storage;
-        this.questions = questions;
+    constructor(storage = './', ...questions) {
+        this.setStorage(storage);
+        this.setQuestions(questions);
     }
 
     setStorage(dir) {
-        this.storage = dir;
+        path.isAbsolute(dir) ? this['#storage'] = dir : this['#storage'] = path.resolve(dir);
     }
 
-    setQuestions(questions) {
-        this.questions = questions;
+    setQuestions(...quests) {
+        Array.isArray(quests.at(0)) ? this['#questions'] = quests.at(0) : this['#questions'] = quests;
     }
 
     getStorage() {
-        return this.storage;
-    }
-
-    getQuestions() {
-        return this.questions;
+        return this['#storage'];
     }
 
     store(itens) {
         itens.map((item) => {
             const 
             name = path.basename(item),
-            dest = path.join(this.getStorage(), name);
+            dest = path.join(this['#storage'], name);
 
             fs.mkdirSync(dest);
-            this.importContent(item, dest);
+            this.#importContent(item, dest);
         });
     }
 
     send() {
-        const questions = this.getQuestions();
-
-        inquirer.prompt(questions).then((answers) => {
+        inquirer.prompt(this['#questions']).then((answers) => {
             const
-            type = answers['project-type'],
-            name = answers['project-name'],
-            origin = path.join(this.getStorage(), type),
+            type = Object.values(answers).at(0),
+            name = Object.values(answers).at(1),
+            orig = path.join(this['#storage'], type),
             dest = path.join(process.cwd(), name);
 
             fs.mkdirSync(dest);
-            this.importContent(origin, dest);
+            this.#importContent(orig, dest);
         });
     }
 
     review() {
-        const questions = this.getQuestions();
-
         let command = null;
 
         switch (process.platform) {
@@ -70,25 +62,22 @@ class Factory {
                 break;
         }
 
-        inquirer.prompt(questions).then((answers) => {
-            const name = path.resolve(this.getStorage() ,answers['template-name']);
-            const dir = path.dirname(name);
+        inquirer.prompt(this['#questions']).then((answer) => {
+            const dir = path.resolve(this['#storage'], Object.values(answer).at(0));
 
-            execSync(`${command} '${name}'`);
+            execSync(`${command} '${dir}'`);
         });
     }
 
     discard() {
-        const questions = this.getQuestions();
-
-        inquirer.prompt(questions).then((answer) => {
-            const dir = path.join(this.getStorage(), answer['template-name']);
+        inquirer.prompt(this['#questions']).then((answer) => {
+            const dir = path.join(this['#storage'], Object.values(answer).at(0));
 
             fs.rmSync(dir, { recursive: true });
         });
     }
 
-    importContent(origin, dest) {
+    #importContent(origin, dest) {
         const files = fs.readdirSync(origin);
 
         files.map((file) => {
@@ -102,7 +91,7 @@ class Factory {
                 fs.writeFileSync(fileDest, fileData, 'utf-8');
             } else if ( fileType.isDirectory() ) {
                 fs.mkdirSync(fileDest);
-                this.importContent(filePath, fileDest);
+                this.#importContent(filePath, fileDest);
             }
         });
     }
