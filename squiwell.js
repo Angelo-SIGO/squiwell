@@ -16,64 +16,51 @@ __dirname = dirname(__filename);
 function main() {
     const 
     flag = process.argv.at(2),
-    templates = process.argv.slice(3),
-    factory = new Factory(),
-    form = new Form(),
-    questControl = new QuestionControl();
-
-    factory.setStorage(path.join(__dirname, 'templates'));
+    factory = new Factory(path.join(__dirname, 'templates')),
+    selectQuest = new Question('', '', 'list', {key: 'choices', value: fs.readdirSync(factory.getStorage())}),
+    form = new Form();
     
     switch (flag) {
         case '--store':
+            const templates = process.argv.slice(3);
+
             factory.store(templates);
             break;
 
         case '--seed':
-            const
-            typeQuest = new Question(),
-            nameQuest = new Question();
+            const 
+            inputQuest = new Question("project-name", "What is the project's name?"),
+            controller = new QuestionControl();
 
-            typeQuest.setName('project-type');
-            typeQuest.setMessage('Which kind of project are you creating?');
-            typeQuest.setType('list');
-            typeQuest.setOptions([{key: 'choices', value: fs.readdirSync(factory.getStorage())}]);
-            
-            nameQuest.setName('project-name');
-            nameQuest.setMessage('What is the name of this project?');
-            nameQuest.setOptions([{key: 'validate', value: (input) => {return questControl.testInput(input)}}]);
+            inputQuest.setOptions({ key: 'validate', value: input => controller.testInput(input) })
 
-            form.setQuestions(typeQuest, nameQuest);
+            selectQuest.setName('project-type');
+            selectQuest.setMessage('What kind of project are you creating?');
 
+            form.setQuestions(selectQuest, inputQuest);
             factory.setQuestions(form.getQuestions());
+            
             factory.send();
             break;
 
         case '--modify':
-            const quest = new Question();
+            selectQuest.setName('template-name');
+            selectQuest.setMessage('Which template do you want to edit?');
 
-            quest.setName('template-name');
-            quest.setMessage('Which template do you wanna edit?');
-            quest.setType('list');
-            quest.setOptions([{key: 'choices', value: fs.readdirSync(factory.getStorage())}]);
-
-            form.setQuestions(quest);
-
+            form.setQuestions(selectQuest);
             factory.setQuestions(form.getQuestions());
+
             factory.review();
             break;
 
         case '--forgot':
-            const deleteQuest = new Question();
+            selectQuest.setName('template-name');
+            selectQuest.setMessage('Which template do you want to remove?');
 
-            deleteQuest.setName('template-name');
-            deleteQuest.setMessage('Which template do you wanna remove?');
-            deleteQuest.setType('list');
-            deleteQuest.setOptions([{key: 'choices', value: fs.readdirSync(factory.getStorage())}]);
-
-            form.setQuestions(deleteQuest);
-
+            form.setQuestions(selectQuest);
             factory.setQuestions(form.getQuestions());
-            factory.discard()
+
+            factory.discard();
             break;
 
         default:

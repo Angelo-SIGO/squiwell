@@ -21,8 +21,6 @@ class Form {
     getQuestions() {
         return this.questions;
     }
-
-
 }
 
 export default Form;
