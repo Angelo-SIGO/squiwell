@@ -1,9 +1,10 @@
 {
   "name": "squiwell",
-  "version": "1.0.0",
+  "version": "0.1.0-beta",
   "description": "Squiwell is command line tool that store your project templates to save time when starting a new project.",
   "main": "squiwell.js",
   "keywords": [
+    "squiwell",
     "tool",
     "cli",
     "cli-tool",
