@@ -12,6 +12,10 @@ const
 __filename = fileURLToPath(import.meta.url),
 __dirname = dirname(__filename);
 
+if ( !fs.existsSync(path.join(__dirname, 'templates')) ) {
+    fs.mkdirSync(path.join(__dirname, 'templates'));
+}
+
 function main() {
     const 
     flag = process.argv.at(2),
